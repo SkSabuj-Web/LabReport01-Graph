@@ -158,3 +158,83 @@ void Dijkstra(int vertices, int graph[vertices][vertices],
 
     PrintPath(vertices,path,destination,distance[destination]);
 }
+
+bool KruskalMST(int vertices,Edge edges[],int edgeCount,
+                int tree[vertices][vertices]) {
+
+    int parent[vertices];
+
+    for(int i =0; i<vertices; i++) {
+        parent[i] = i;
+    }
+
+    for(int i =0; i < edgeCount-1;i++) {
+        for(int j =0; j < edgeCount - i - 1; j++) {
+            if(edges[j].w > edges[j+1].w) {
+                Edge temp = edges[j];
+                edges[j] = edges[j + 1];
+                edges[j + 1]=temp;
+            }
+        }
+    }
+
+    int count = 0;
+
+    for(int i=0; i < edgeCount; i++) {
+        int u = FindParent(parent,edges[i].u);
+        int v = FindParent(parent,edges[i].v);
+
+        if(u != v) {
+            tree[edges[i].u][edges[i].v] = edges[i].w;
+            tree[edges[i].v][edges[i].u] = edges[i].w;
+
+            parent[u]=v;
+            count++;
+
+            if(count == vertices-1) break;
+        }
+    }
+
+    return count==vertices-1;
+}
+
+bool PrimMST(int vertices, int graph[vertices][vertices],
+             int tree[vertices][vertices]) {
+
+    int parent[vertices], minCost[vertices];
+    bool included[vertices];
+
+    for(int i = 0; i<vertices; i++) {
+        parent[i] =-1;
+        minCost[i] = INT_MAX;
+        included[i] = false;
+    }
+
+    minCost[0] = 0;
+
+    for(int i = 0; i<vertices; i++) {
+        int current = FindMinCost(vertices, minCost, included);
+
+        if(current ==-1) return false;
+
+        included[current] = true;
+
+        for(int j = 0; j < vertices; j++) {
+            if(graph[current][j] != 0 && !included[j] &&
+               graph[current][j] < minCost[j]) {
+
+                minCost[j] = graph[current][j];
+                parent[j] = current;
+            }
+        }
+    }
+
+    for(int i =1; i<vertices; i++) {
+        if(parent[i] == -1) return false;
+
+        tree[parent[i]][i] = graph[parent[i]][i];
+        tree[i][parent[i]] = graph[i][parent[i]];
+    }
+
+    return true;
+}
