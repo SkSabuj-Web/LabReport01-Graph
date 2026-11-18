@@ -238,3 +238,81 @@ bool PrimMST(int vertices, int graph[vertices][vertices],
 
     return true;
 }
+
+void ShowKruskal(int vertices,Edge edges[],int edgeCount,
+                int source,int destination) {
+
+    int tree[vertices][vertices];
+
+    for(int i =0; i < vertices; i++) {
+        for(int j =0; j < vertices; j++) {
+            tree[i][j] =0;
+         }
+    }
+    int path[vertices], cost;
+
+    if(KruskalMST(vertices,edges,edgeCount,tree)) {
+        if(FindTreePath(vertices,tree,source,destination,path,&cost)) {
+            PrintPath(vertices, path, destination, cost);
+        }
+        else {
+            printf("Not Possible\n");
+        }
+    }
+    else {
+        printf("Not Possible\n");
+    }
+}
+
+void ShowPrim(int vertices,int graph[vertices][vertices],
+             int source,int destination) {
+
+    int tree[vertices][vertices];
+
+    for(int i =0; i < vertices;i++) {
+        for(int j =0; j < vertices;j++) {
+            tree[i][j] =0;
+            }
+    }
+    int path[vertices], cost;
+
+    if(PrimMST(vertices,graph,tree)) {
+        if(FindTreePath(vertices,tree,source,destination,path,&cost)) {
+            PrintPath(vertices, path, destination, cost);
+        }
+        else {
+            printf("Not Possible\n");
+        }
+    }
+    else {
+        printf("Not Possible\n");
+    }
+}
+
+int main() {
+    FILE *file=fopen("input.txt", "r");
+
+    if(file == NULL){
+        printf("File not found!\n");
+        return 1;
+    }
+
+    int vertices, edgeCount;
+    fscanf(file,"%d %d",&vertices,&edgeCount);
+
+    Edge edges[edgeCount];
+    int graph[vertices][vertices];
+
+    for(int i =0; i < vertices; i++) {
+        for(int j =0; j < vertices; j++) {
+            graph[i][j] =0;
+        }
+    }
+
+    for(int i = 0; i < edgeCount; i++) {
+        fscanf(file, "%d %d %d",
+               &edges[i].u, &edges[i].v, &edges[i].w);
+
+        graph[edges[i].u][edges[i].v] = edges[i].w;
+        graph[edges[i].v][edges[i].u] = edges[i].w;
+    }
