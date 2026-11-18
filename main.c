@@ -98,3 +98,63 @@ void PrintPath(int vertices,int path[], int destination, int cost) {
 
     printf(" (Cost: %d)\n",cost);
 }
+
+void Dijkstra(int vertices, int graph[vertices][vertices],
+              int source,int destination) {
+
+    int distance[vertices],parent[vertices];
+    bool included[vertices];
+
+    for(int i = 0; i < vertices; i++) {
+        distance[i] = INT_MAX;
+        parent[i] = -1;
+        included[i] =false;
+    }
+
+    distance[source] = 0;
+
+    for(int i = 0; i < vertices; i++) {
+        int min = INT_MAX;
+        int current = -1;
+
+        for(int j = 0; j < vertices; j++) {
+            if(!included[j] && distance[j]< min) {
+                min = distance[j];
+                current = j;
+            }
+        }
+
+        if(current == -1) break;
+
+        included[current] =true;
+
+        for(int j = 0; j < vertices; j++) {
+            if(graph[current][j] != 0 && !included[j] &&
+               distance[current] !=INT_MAX &&
+               distance[current] + graph[current][j]<distance[j]) {
+
+                distance[j] = distance[current]+graph[current][j];
+                parent[j] = current;
+            }
+        }
+    }
+
+    if(distance[destination] == INT_MAX) {
+        printf("Not Possible\n");
+        return;
+    }
+
+    int temp[vertices], path[vertices];
+    int count = 0, current=destination;
+
+    while(current !=-1) {
+        temp[count++]=current;
+        current=parent[current];
+    }
+
+    for(int i =0; i < count; i++) {
+        path[i] =temp[count - 1 - i];
+    }
+
+    PrintPath(vertices,path,destination,distance[destination]);
+}
