@@ -316,3 +316,62 @@ int main() {
         graph[edges[i].u][edges[i].v] = edges[i].w;
         graph[edges[i].v][edges[i].u] = edges[i].w;
     }
+
+    int source, destination, removeU, removeV;
+
+    fscanf(file, "%d %d", &source, &destination);
+    fscanf(file, "%d %d", &removeU, &removeV);
+
+    fclose(file);
+
+    printf("Shortest Path: ");
+    Dijkstra(vertices, graph, source, destination);
+
+    Edge kruskalEdges[edgeCount];
+
+    for(int i = 0; i < edgeCount; i++) {
+        kruskalEdges[i] = edges[i];
+    }
+
+    printf("Kruskal Path:   ");
+    ShowKruskal(vertices, kruskalEdges, edgeCount, source, destination);
+
+    printf("Prim Path:      ");
+    ShowPrim(vertices, graph, source, destination);
+
+    printf("After Removing Edge (%d,%d):\n", removeU, removeV);
+
+    int newEdgeCount = 0;
+    Edge newEdges[edgeCount];
+    int newGraph[vertices][vertices];
+
+    for(int i = 0; i < vertices; i++) {
+        for(int j = 0; j < vertices; j++) {
+            newGraph[i][j] = 0;
+        }
+    }
+
+    for(int i =0;i<edgeCount;i++) {
+        if(!((edges[i].u == removeU && edges[i].v == removeV) ||
+             (edges[i].u == removeV && edges[i].v == removeU))) {
+
+            newEdges[newEdgeCount] = edges[i];
+
+            newGraph[edges[i].u][edges[i].v] = edges[i].w;
+            newGraph[edges[i].v][edges[i].u] = edges[i].w;
+
+            newEdgeCount++;
+        }
+    }
+
+    printf("Updated Shortest Path: ");
+    Dijkstra(vertices,newGraph,source,destination);
+
+    printf("Updated Kruskal Path:  ");
+    ShowKruskal(vertices,newEdges,newEdgeCount,source,destination);
+
+    printf("Updated Prim Path:     ");
+    ShowPrim(vertices,newGraph,source,destination);
+
+    return 0;
+}
